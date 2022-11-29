@@ -24,7 +24,7 @@
     </div>
 </template>
 
-<script>
+<script setup>
 
 import env from "/env.json";
 import { onMounted, ref } from "@vue/runtime-core";
@@ -44,7 +44,7 @@ const findAll = () => {
         alert("Error: " + error.response.data)
     })
     
-    axios.get(apiURL + "/family" + id)
+    axios.get(apiURL + "/family")
     .then((response) => {
         console.log("Response: " + JSON.stringify(response.data))
         families.value = response.data
