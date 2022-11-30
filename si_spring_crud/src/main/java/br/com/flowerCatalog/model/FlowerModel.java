@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Table(name = "flowers")
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "Flower Model V2")
+@ApiModel(value = "Flower Model")
 public class FlowerModel extends RepresentationModel {
 
     @Id

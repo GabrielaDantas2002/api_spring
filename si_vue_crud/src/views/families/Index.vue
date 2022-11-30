@@ -9,7 +9,7 @@
         <th>Editar</th>
         <th>Excluir</th>
       </tr>
-      <tr v-for="fm in families">
+      <tr v-for="fm in families" :key="fm.id">
         <td>{{ fm.familyName }}</td>
         <td>
           <router-link :to="{ name: 'fam-edit', params: { id: fm.id } }"

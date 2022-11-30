@@ -6,6 +6,9 @@ import Home from '@/views/Home.vue';
   <div>
     <div class="navbar">
       <div class="dropdown">
+      <button class="dropbtn"><router-link to="/">Home</router-link></button>
+      </div>
+      <div class="dropdown">
       <button class="dropbtn">Flores
       <i class="fa fa-caret-down"></i>
       </button>

@@ -10,9 +10,9 @@
             <label for="color">Cor: </label>
             <input type="text" name="color" id="color" v-model="flower.color" placeholder="Cor">
             <label for="family">Família: </label>
-            <select v-model="flower.family">
+            <select v-model="flower.family.id">
                 <option disabled value=""> Selecionar família </option>
-                <option v-for="fm in families" :value="fm" :key="fm.id">{{ fm.familyName }}</option>
+                <option v-for="fm in family" :value="fm.id" :key="fm.id">{{ fm.familyName }}</option>
             </select>
             <button class="btn info" @click="update()"> Atualizar </button>
         </form>
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue"
+import { onMounted, reactive, ref } from "vue"
 import env from "/env.json"
 import { useRoute } from "vue-router";
 import axios from "axios";
@@ -29,34 +29,50 @@ const apiURL = env.apiURL
 
 const route = useRoute()
 
-const flower = ref({
+const family = ref([])
+
+const flower = reactive({
     id: null,
     name: "",
     scientificName: "",
     color: "",
-    family: ""
+    family: {
+        "id": null,
+        "familyName": "",
+    }
 })
 
 const load = () => {
     let id = route.params.id
     axios.get(apiURL + "/flower/" + id)
         .then((response) => {
-            flower.value.id = response.data.id;
-            flower.value.name = response.data.name;
-            flower.value.scientificName = response.data.scientificName;
-            flower.value.color = response.data.color;
-            flower.value.familyName = response.data.familyName;
+            flower.id = response.data.id;
+            flower.name = response.data.name;
+            flower.scientificName = response.data.scientificName;
+            flower.color = response.data.color;
+            flower.family.id = response.data.family.id;
+            flower.family.familyName = response.data.family.familyName;
         }).catch((error) => {
-            alert("Erro: " + error.response.status)
+            alert("Erro: " + error.response)
+        })
+}
+
+const loadFamily = () => {
+    axios.get(apiURL + "/family")
+        .then((response) => {
+            family.value = response.data
+        }).catch((error) => {
+            alert("Erro: " + error.response)
         })
 }
 
 const update = () => {
-    axios.put(apiURL + "/flower", flower.value)
+    axios.put(apiURL + "/flower", flower)
         .then((response) => {
             if (response.data != "") {
                 alert("Dados atualizados com sucesso!")
                 load()
+                loadFamily()
             }
         }).catch((error) => {
             alert("Erro: " + error.response.status)
@@ -65,6 +81,7 @@ const update = () => {
 
 onMounted(() => {
     load();
+    loadFamily();
 })
 </script>
 

@@ -12,11 +12,11 @@
                 <th>Editar</th>
                 <th>Excluir</th>
             </tr>
-            <tr v-for="f in flowers">
+            <tr v-for="f in flowers" :key="f.id">
                 <td>{{ f.name }}</td>
                 <td>{{ f.scientificName }}</td>
                 <td>{{ f.color }}</td>
-                <td v-for="fm in families" :value="fm" :key="fm.id">{{fm.familyName}}</td>
+                <td>{{ f.family.familyName }}</td>    
                 <td><router-link :to="{ name: 'flo-edit', params: {id: f.id} }" ><button class="btn fa fa-edit"></button></router-link></td>
                 <td><button class="btn fa fa-trash" @click="destroy(f.id)"></button></td>
             </tr>
@@ -35,10 +35,11 @@ const apiURL = env.apiURL;
 const flowers = ref([]);
 
 const findAll = () => {
-    axios.get(apiURL + "/flower")
+    axios
+    .get(apiURL + "/flower")
     .then((response) => {
         console.log("Response: " + JSON.stringify(response.data))
-        flowers.value = response.data
+        flowers.value = response.data._embedded.flowerModelList;
     })
     .catch((error) => {
         alert("Error: " + error.response.data)
@@ -47,17 +48,25 @@ const findAll = () => {
     axios.get(apiURL + "/family")
     .then((response) => {
         console.log("Response: " + JSON.stringify(response.data))
-        families.value = response.data
+        families.value = response.data;
     })
     .catch((error) => {
-        alert("Error: " + error.response.data)
+        alert("Error: " + JSON.stringify(error.response))
+    })
+
+    flowers.value.forEach((f)=> {
+        families.value.forEach((fm)=> {
+            if(fm.id == f.families_id)
+            f.family = fm
+        })
+    
     })
 }
 
 const destroy = (id) => {
     if (confirm("Deseja excluir a flor selecionada?" )) {
     axios
-        .delete(apiURL + "/flower" + id)
+        .delete(apiURL + "/flower/" + id)
         .then((response) => {
             if (response.status === 200 && response.data == "") {
                 alert("Dados excluídos com sucesso!");
@@ -65,7 +74,7 @@ const destroy = (id) => {
             }
         })
         .catch((error) => {
-            alert("Erro: " + error.response.status);
+            alert("Erro: " + error.response);
         });
     }
 };

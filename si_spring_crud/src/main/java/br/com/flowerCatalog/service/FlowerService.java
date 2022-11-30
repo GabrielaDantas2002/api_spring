@@ -34,6 +34,7 @@ public class FlowerService {
             f.get().setName(model.getName());
             f.get().setScientificName(model.getScientificName());
             f.get().setColor(model.getColor());
+            f.get().setFamily(model.getFamily());
             //---------------------------------------
             return repository.save(f.get());
         } else {
